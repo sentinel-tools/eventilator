@@ -18,7 +18,23 @@ event emitted by that sentinel will call eventilator.
 In reconfigurator mode the application will be called when a slave has
 successfully been promoted to master. Registration in sentinel is accomplished
 via `sentinel set <podname> client-reconfig-script /path/to/registrator`. In
-this mode it will relay the failover event for the given pod.
+this mode it will relay the failover event for the given pod. To see the
+details on how the failovver metrics are stored see the
+[redis.md](handlers/redis.md) in the `handlers` directory.
+
+# Which One to Use
+
+The main criteria is whether you care about things only happening on the
+elected leader sentinel, or just want/need to capture all warning level events.
+If, for example, you are wanting to update a database or DNS when a failover
+happens you will want to use registrator. This is because only the leader
+executes registrator when configured properly. With that in place you don't
+have to worry about getting three events for the same failover.
+
+If, however, you are wanting to capture all the events and have a mechanism to
+dedupe certain events such as `+switch-master` or are making idempotent calls
+then eventilator is much more amenable in that it handles all warning level
+events.
 
 # Installation
 
@@ -28,6 +44,15 @@ The simplest route is to have the eventilator executable in place and symlink
 `registrator` to it. They will need to be executable by the user running Redis
 sentinel. Following traditional UNIX methodology the command detects the mode
 by obtaining what name it was called by.
+
+# Configuration
+
+With the addition of a default handler for registrator which stores failover
+metrics in a Redis instance there will be config files for each mode. These are
+expected to be stored in `/etc/redis/eventilator.conf` and
+`/etc/redis/registrator.conf`. Currently only registrator uses a config file to
+learn about the Redis instance. As new handlers such as monitoring hooks are
+added into eventilator it will expect the configuration in it's config file.
 
 
 # Custom Eventilator Handlers
