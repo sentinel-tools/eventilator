@@ -76,3 +76,22 @@ These handlers will need to:
 1. return an error (or nil)
 
 To register your custom handler follow the pattern of using `HandlerMap.SetMandler(eventname,handlerfunc)` as is done in eventilator.go.
+
+
+## Neat Ideas You Could Implement
+
+Just a collection of some things that might be really cool to do with this.
+
+Imagine you run your Redis instances on a Docker Swarm of hosts. If so you
+could write a handler for `sdown` on a slave to boot a new instance and enslave
+it to the master. 
+
+Alternatively you could do the same thing but instead spin up a new cloud
+server such as an AWS EC2 or Rackspace Cloud Server VMs configured w/Redis that
+you then enslave to the pod.
+
+Use the event system to reconfigure an HAProxy somewhere.
+
+Track the frequency of a given node being subjectively down and once it hits a
+given threshold migrate it to a new instance to try to improve reliability of
+the node.
