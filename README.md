@@ -7,7 +7,7 @@ works each pod which needs to be configured with the "script".`
 
 # Eventilator
 
-The ventilator mode is designed to be used as the sentinel
+The eventilator mode is designed to be used as the sentinel
 notification-script for the given pods. To add to a running sentinel pod
 connect to each sentinel and execute `sentinel set <podname>
 notification-script /path/to/eventilator`. Once configured any warning
