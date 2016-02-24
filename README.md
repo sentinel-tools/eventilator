@@ -43,7 +43,7 @@ passed to `go -build`.
 
 These handlers will need to:
 
-	1) accept a parser.NotificationEvent
-	2) return an error (or nil)
+1. accept a parser.NotificationEvent
+1. return an error (or nil)
 
 To register your custom handler follow the pattern of using `HandlerMap.SetMandler(eventname,handlerfunc)` as is done in eventilator.go.
