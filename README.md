@@ -35,12 +35,15 @@ by obtaining what name it was called by.
 The simplest way to add custom handlers is to fork the repo and add custom
 eventilator handlers in a separate file in `handlers/` with the build tag `//
 +build custom` and use that tag to build. An example of this is visible in
-`handlers/eventilator-custom.go`. NOTE: this process means you need to define
-and register all event handlers you need to handle as the default ones will not
-compile with the `custom` build tag passed to `go -build`.
+`handlers/eventilator-custom.go`. 
+
+NOTE: this process means you need to define and register all event handlers you
+need to handle as the default ones will not compile with the `custom` build tag
+passed to `go -build`.
 
 These handlers will need to:
-1) accept a parser.NotificationEvent
-2) return an error (or nil)
 
-To register you rcustom handler follow the pattern of using `HandlerMap.SetMandler(eventname,handlerfunc)` as is done in eventilator.go.
+	1) accept a parser.NotificationEvent
+	2) return an error (or nil)
+
+To register your custom handler follow the pattern of using `HandlerMap.SetMandler(eventname,handlerfunc)` as is done in eventilator.go.
