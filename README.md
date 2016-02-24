@@ -34,7 +34,11 @@ have to worry about getting three events for the same failover.
 If, however, you are wanting to capture all the events and have a mechanism to
 dedupe certain events such as `+switch-master` or are making idempotent calls
 then eventilator is much more amenable in that it handles all warning level
-events.
+events. Another option for handling failvoer events is to not look at
+`+switch-master` but catch the `+promoted-slave` event. You get the same
+information but *only* the leader isues this event. Thus if you catch this
+event you can still have eventilator handle a failvoer without worrying about
+having it executed on each sentinel.
 
 # Installation
 
