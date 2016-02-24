@@ -22,3 +22,11 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# vim
+*.swp
+*.swo
+
+# Redis
+*.rdb
+eventilator
