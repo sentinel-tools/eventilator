@@ -1,3 +1,5 @@
+// +build !custom
+
 package handlers
 
 import (

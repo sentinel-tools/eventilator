@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -44,7 +43,6 @@ type NotificationEvent struct {
 }
 
 func ParseReconfiguration(args []string) (re ReconfigurationEvent, err error) {
-	log.Printf("parseReconfiguration args: %+v\nargcount: %d", args, len(args))
 	re.Podname = args[0]
 	re.Role = args[1]
 	re.State = args[2]
@@ -57,7 +55,6 @@ func ParseReconfiguration(args []string) (re ReconfigurationEvent, err error) {
 
 func ParseNotification(event string, args []string) (ne NotificationEvent, err error) {
 	ne.Eventname = event
-	log.Printf("parsing %s: %+v", event, args)
 	switch event {
 	case "+vote-for-leader":
 		//runid epoch
@@ -67,12 +64,10 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 		//16
 		ne.Epoch, err = strconv.Atoi(args[0])
 	case "+odown":
-		log.Printf("parsing odown: %+v", args)
 		ne.Role = args[0]
 		ne.Podname = args[1]
 		ne.IP = args[2]
 		ne.Port, err = strconv.Atoi(args[3])
-		log.Printf("ODOWN for %s", ne.Podname)
 		qdata := strings.Split(args[5], "/")
 		ne.Quorum, err = strconv.Atoi(qdata[1])
 		ne.Votes, err = strconv.Atoi(qdata[0])
@@ -102,7 +97,6 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 		ne.Port, err = strconv.Atoi(args[3])
 		ne.Extra = strings.Join(args[4:], " ")
 	case "+try-failover":
-		log.Printf("Failover attempt detected for %s", args[1])
 		ne.Role = args[0]
 		ne.Podname = args[1]
 		ne.IP = args[2]
@@ -123,7 +117,6 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 		ne.Port, _ = strconv.Atoi(args[4])
 		ne.NewMasterIP = args[3]
 		ne.NewMasterPort, _ = strconv.Atoi(args[4])
-		log.Printf("FAILOVER for %s", ne.Podname)
 	case "+promoted-slave", "+convert-to-slave":
 		//slave 127.0.0.1:6379 127.0.0.1 6379 @ tp1 127.0.0.1 7000
 		ne.Role = args[0]
@@ -144,15 +137,11 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 	case "+monitor":
 		//master tp1 127.0.0.1 7000 quorum 1
 		ne.Role = args[0]
-		log.Printf("role: %s", ne.Role)
 		ne.Podname = args[1]
 		ne.IP = args[2]
 		ne.Port, _ = strconv.Atoi(args[3])
-		log.Printf("Picked up pod %s", ne.Podname)
 	default:
-		fmt.Printf("UNHANDLED] Argument count: %d\n", len(args))
-		fmt.Println(os.Args)
-		return ne, fmt.Errorf("Don't know how to handle event '%s' yet", event)
+		return ne, fmt.Errorf("Don't know how to handle event '%s' yet. Its args are %v", event, os.Args[1:])
 	}
 	return
 }
