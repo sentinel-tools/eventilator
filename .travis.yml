@@ -6,5 +6,8 @@ go:
 before_install:
   - go get github.com/tcnksm/ghr
 
+install:
+    go get -t ./...
+
 after_success:
     make distribution
