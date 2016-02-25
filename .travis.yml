@@ -7,6 +7,7 @@ before_install:
   - go get github.com/tcnksm/ghr
 
 after_success:
-  - go build 
-  - go build  -o reconfigurator
-  - ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) eventilator reconfigurator.conf reconfigurator
+  - go build -o dist/eventilator
+  - go build -o dist/reconfigurator
+  - go build ./utils/sentinel-scriptify -o dist/reconfigurator
+  - ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) dist
