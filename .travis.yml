@@ -11,3 +11,4 @@ install:
 
 after_success:
     make release
+    ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) eventilator-$(cat .version).tar.gz
