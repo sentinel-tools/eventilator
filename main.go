@@ -20,6 +20,17 @@ type rconfig struct {
 	RedisAuth    string
 }
 
+var rconf rconfig
+
+func getDefaultReconfigConfig() rconfig {
+	var rc = rconfig{RedisAddress: "127.0.0.1", RedisPort: 6379, RedisAuth: ""}
+	return rc
+}
+
+func init() {
+	// set up a default config for reconfigurator
+	rconf = getDefaultReconfigConfig()
+}
 func main() {
 	rcfile := "/etc/redis/reconfigurator.conf"
 
@@ -34,13 +45,13 @@ func main() {
 		raw, err := ioutil.ReadFile(rcfile)
 		rcdata := string(raw)
 		if err != nil {
-			log.Fatal("Unable to read configfile for reconfigurator")
-		}
-		var rconf rconfig
-		if _, err := toml.Decode(rcdata, &rconf); err != nil {
-			log.Fatalf("Unable to parse configfile for reconfigurator: %+v", err)
+			log.Print("Unable to read configfile for reconfigurator. Using default config.")
 		} else {
-			log.Print("parsed config")
+			if _, err := toml.Decode(rcdata, &rconf); err != nil {
+				log.Fatalf("Unable to parse configfile for reconfigurator: %+v", err)
+			} else {
+				log.Print("parsed config")
+			}
 		}
 		handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
 

@@ -5,6 +5,10 @@ test:
 	go test
 	go vet
 
+
+all: eventilator reconfigurator sentinel-scriptify
+	@echo all binaries built
+
 distribution: eventilator reconfigurator sentinel-scriptify
 	mkdir -p dist/usr/sbin
 	mv eventilator dist/usr/sbin
@@ -17,7 +21,7 @@ eventilator:
 	@echo Building eventilator
 	go build 
 
-reconfigurator:
+reconfigurator: 
 	@echo Building reconfigurator
 	go build -o reconfigurator
 

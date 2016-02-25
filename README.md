@@ -54,9 +54,11 @@ by obtaining what name it was called by.
 With the addition of a default handler for registrator which stores failover
 metrics in a Redis instance there will be config files for each mode. These are
 expected to be stored in `/etc/redis/eventilator.conf` and
-`/etc/redis/registrator.conf`. Currently only registrator uses a config file to
-learn about the Redis instance. As new handlers such as monitoring hooks are
-added into eventilator it will expect the configuration in it's config file.
+`/etc/redis/registrator.conf`. Currently only registrator uses a config
+file to learn about the Redis instance. If not found it uses a default
+value of a localhost Redis instance on the default port with
+authentication.  As new handlers such as monitoring hooks are added into
+eventilator it will expect the configuration in it's config file.
 
 
 # Custom Eventilator Handlers
