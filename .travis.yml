@@ -7,8 +7,4 @@ before_install:
   - go get github.com/tcnksm/ghr
 
 after_success:
-  - go build -o dist/eventilator
-  - go build -o dist/reconfigurator
-  - go build ./utils/sentinel-scriptify -o dist/reconfigurator
-  - echo ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) dist/
-  - ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) dist/
+    make distribution
