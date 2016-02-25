@@ -13,5 +13,5 @@ after_success:
   - cp reconfigurator.conf etc/redis
   - cp reconfigurator usr/sbin
   - cp eventilator usr/sbin
-  - tar -czf eventilator.tar.gz usr etc
+  - tar -cvzf eventilator.tar.gz usr etc
   - ghr  --username sentinel-tools --token $GITHUB_TOKEN $(cat .version) eventilator.tar.gz
