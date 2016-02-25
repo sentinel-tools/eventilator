@@ -1,5 +1,8 @@
 # Sentinel Event Relay
 
+[![Build
+Status](https://travis-ci.org/sentinel-tools/eventilator.svg?branch=master)](https://travis-ci.org/sentinel-tools/eventilator)
+
 This utility runs under two modes: `eventilator` and `reconfigurator`. Both
 modes relay or record certain Sentinel events. With the way Sentinel
 works each pod which needs to be configured with the "script".`
