@@ -17,7 +17,8 @@ release: eventilator reconfigurator sentinel-scriptify
 	cd dist && tar -cvzf ../eventilator-${VERSION}.tar.gz usr/ && cd ..
 	echo Version=${VERSION}
 	ls -lh eventilator-${VERSION}.tar.gz
-	@ghr  --username sentinel-tools --token ${GITHUB_TOKEN} ${VERSION} eventilator-${VERSION}.tar.gz
+	@echo  ghr --username sentinel-tools --token ${GITHUB_TOKEN} ${VERSION} eventilator-${VERSION}.tar.gz
+	ghr  --username sentinel-tools --token ${GITHUB_TOKEN} ${VERSION} eventilator-${VERSION}.tar.gz
 
 eventilator:
 	@echo Building eventilator
