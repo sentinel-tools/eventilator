@@ -10,4 +10,4 @@ install:
     go get -t ./...
 
 after_success:
-    make distribution
+    make release
