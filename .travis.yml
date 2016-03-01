@@ -1,13 +1,10 @@
 language: go
-
 go:
-    - 1.5
-
+- 1.5
 before_install:
-  - go get github.com/tcnksm/ghr
-
-install:
-    go get -t ./...
-
-after_success:
-    make release
+- go get github.com/tcnksm/ghr
+install: go get -t ./...
+after_success: make release
+notifications:
+  slack:
+    secure: fq1ogO8BNaLxPJZUmmuAJvCFbrEKcIrLiy+r2im4m70Zqdx768qjnRPMVTiE2HZeewjdzyTrlR5naKSm65sDd7nc0ksvfoBDGrtMG2pvsAjMiHtC7LKftPMJzbIVb/eaQsj7m5Hxakhq6xzHjY06cHKoptTejKfmhHESmctt5id0Vn2YF2PVpkpyBmt6dnAQBvXCF2sRdNzkBIa75siOYzrGC4iGhyflsnv5E/hyvveC2r/OF2Qae2Ue3Xp/J+C1/MvDImjDzm6DDh9M8NjvaQy82pFaXBlQLwy7QTp1fzKu3EskBxV5Ue5Zy6wFaQiYrh6aHjLENgZmZme8ZLiyLKR5o2b0FNzDMI7fsa5OUdClSHVfGxOPdwbNHRwpLuxQQ5LD/8iMYnQ1rZk04GKKWMHTDWVxFMHrXmZM3gZLuQDHm7CAB+rQFx4PMby+90KFtCxA7ldJ7+Qg6PuxlhNBzJePEYVQRZ3xseZVwL2Xz/p+3ajrFMugRkFVjI1T+HnRvUfnrcZFPoxT1Unmmr2DD259ZfH9N1lmAg9nikfmwIM6rbD1eW9H657umo77Hr+IEk2MF22Z5x57OrvjYEPjL2dPWbMLwILVqGLUpjuDR0wubhWuTkrNwFLqe6Lkhtnn2/XTmVOcg7dmBcujmb4dOo7bUrpRarLnHWp5eVrsw6s=
