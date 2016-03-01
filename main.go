@@ -53,7 +53,10 @@ func main() {
 				log.Print("parsed config")
 			}
 		}
-		handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
+		err = handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
+		if err != nil {
+			log.Fatalf("Unable to set up Redis connection. Error='%v'", err)
+		}
 
 		rargs := os.Args[1:]
 		if len(rargs) != 7 {

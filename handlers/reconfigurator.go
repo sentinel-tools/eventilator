@@ -18,12 +18,19 @@ type RedisConnection struct {
 var redisconn *client.Redis
 
 func SetRedisConnection(ip string, port int, auth string) (err error) {
-	redisconn, err = client.Dial(ip, port)
+	if auth > "" {
+		redisconn, err = client.DialWithConfig(&client.DialConfig{Address: fmt.Sprintf("%s:%d", ip, port), Password: auth})
+	} else {
+		redisconn, err = client.Dial(ip, port)
+	}
 	return err
 }
 
 func GetRedisConnection() (rc *client.Redis, err error) {
-	return redisconn, nil
+	if redisconn != nil {
+		return redisconn, nil
+	}
+	return rc, fmt.Errorf("Redis connection not initialized!")
 }
 
 func UpdateRedisStore(event parser.ReconfigurationEvent) (code int, err error) {
@@ -32,6 +39,12 @@ func UpdateRedisStore(event parser.ReconfigurationEvent) (code int, err error) {
 	now := time.Now()
 	//nowstamp := now.Format("2015:03:07:15:04:05")
 	rc, err := GetRedisConnection()
+	if err != nil {
+		log.Fatalf("Redis connect error: '%v'", err)
+	}
+	if rc == nil {
+		log.Fatalf("Redis connect failure: '%v'", err)
+	}
 	rkey := fmt.Sprintf("failovers:%s:timestamps", event.Podname)
 	tstamp := now.Unix()
 	rc.SAdd(rkey, fmt.Sprintf("%d", tstamp))
