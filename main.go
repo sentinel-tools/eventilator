@@ -50,7 +50,7 @@ func main() {
 		}
 		err = handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
 		if err != nil {
-			log.Fatalf("Unable to connect to Store. Error='%v'", err)
+			log.Fatalf("Unable to set up Redis connection. Error='%v'", err)
 		}
 
 		rargs := os.Args[1:]
