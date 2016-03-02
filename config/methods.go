@@ -25,6 +25,7 @@ func GetDefaultSlackConfig() SlackConfig {
 		Enabled:    false,
 		Channel:    "sentinel-events",
 		AuthorName: "eventilator",
+		TriggerOn:  []string{"+odown", "-odown", "+sdown", "-sdown", "+prmoted-slave"},
 	}
 	hostname, err := os.Hostname()
 	if err != nil {

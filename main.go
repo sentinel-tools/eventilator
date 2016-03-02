@@ -9,7 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BurntSushi/toml"
+	//"github.com/BurntSushi/toml"
+	"github.com/naoina/toml"
 	"github.com/sentinel-tools/eventilator/config"
 	"github.com/sentinel-tools/eventilator/handlers"
 	"github.com/sentinel-tools/eventilator/parser"
@@ -29,7 +30,6 @@ func main() {
 	rcfile := "/etc/redis/reconfigurator.conf"
 	ecfile := "/etc/redis/eventilator.conf"
 
-	//log.Printf("Consul address: %s", os.Getenv("CONSUL_ADDRESS"))
 	path := strings.Split(os.Args[0], "/")
 	rand.Seed(time.Now().UnixNano())
 	calledAs := path[len(path)-1]
@@ -38,11 +38,10 @@ func main() {
 	switch calledAs {
 	case "reconfigurator":
 		raw, err := ioutil.ReadFile(rcfile)
-		rcdata := string(raw)
 		if err != nil {
 			log.Print("Unable to read configfile for reconfigurator. Using default config.")
 		} else {
-			if _, err := toml.Decode(rcdata, &rconf); err != nil {
+			if err := toml.Unmarshal(raw, &rconf); err != nil {
 				log.Fatalf("Unable to parse configfile for reconfigurator: %+v", err)
 			} else {
 				log.Print("parsed config")
@@ -78,14 +77,13 @@ func main() {
 		}
 	case "eventilator":
 		raw, err := ioutil.ReadFile(ecfile)
-		cdata := string(raw)
 		if err != nil {
 			log.Print("Unable to read configfile for reconfigurator. Using default config.")
 		} else {
-			if _, err := toml.Decode(cdata, &econf); err != nil {
+			if err := toml.Unmarshal(raw, &econf); err != nil {
 				log.Fatalf("Unable to parse configfile for eventilator: %+v", err)
 			} else {
-				log.Print("parsed config")
+				log.Print("parsed eventilator config")
 			}
 		}
 		err = handlers.SetRedisConnection(econf.RedisAddress, econf.RedisPort, econf.RedisAuth)
@@ -93,7 +91,6 @@ func main() {
 			log.Fatalf("Unable to connect to Store. Error='%v'", err)
 		}
 		eventtype := os.Args[1]
-		//args := strings.Split(os.Args[2], " ")
 		args := os.Args[2:]
 		event, err := parser.ParseNotification(eventtype, args)
 		var errors []error

@@ -51,11 +51,18 @@ func HandleSwitchMaster(event parser.NotificationEvent) error {
 	return nil
 }
 
+// HandlePromotedSlave will handle +promoted-slave
+func HandlePromotedSlave(event parser.NotificationEvent) error {
+	log.Printf("Slave promoted for %s completed. New master is %s:%d", event.Podname, event.NewMasterIP, event.NewMasterPort)
+	return nil
+}
+
 func RegisterHandlers() {
 	HandlerMap.SetHandler("+sdown", HandleNewSdown)
 	HandlerMap.SetHandler("-sdown", HandleUnSdown)
 	HandlerMap.SetHandler("+odown", HandleNewOdown)
 	HandlerMap.SetHandler("-odown", HandleUnOdown)
+	HandlerMap.SetHandler("+promoted-slave", HandlePromotedSlave)
 	HandlerMap.SetHandler("+switch-master", HandleSwitchMaster)
 	HandlerMap.SetHandler("-failover-abort-no-good-slave", HandleAbortedFailoverNoGoodSlave)
 }

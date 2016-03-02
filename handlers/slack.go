@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/bluele/slack"
 	"github.com/sentinel-tools/eventilator/config"
@@ -10,36 +11,56 @@ import (
 )
 
 func PostNotificationEventToSlackChannel(config config.SlackConfig, event parser.NotificationEvent) (err error) {
+	doTrigger := contains(config.TriggerOn, event.Eventname)
+	hostname, err := os.Hostname()
+	log.Printf("slack.TriggerOn: %v", config.TriggerOn)
+	if !doTrigger {
+		log.Printf("ignoring %s by config", event.Eventname)
+		return nil
+	}
 	api := slack.New(config.Token)
 	channel, err := api.FindChannelByName(config.Channel)
 	levelColor := "warning"
+	// switch through event to determine attachment color
 	switch event.Role {
 	case "sentinel":
 		levelColor = "danger"
 	}
 	switch event.Eventname {
-	case "+odown":
+	case "+odown", "-failover-abort-no-good-slave":
 		levelColor = "danger"
-	case "-odown":
+	case "-odown", "-sdown":
 		levelColor = "good"
 	}
-	// switch through event to determine color
 	att := slack.Attachment{Color: levelColor, AuthorName: config.AuthorName}
 	att.Title = fmt.Sprintf("Sentinel event")
 	eventField := slack.AttachmentField{Title: "Event Name", Value: event.Eventname, Short: true}
 	podField := slack.AttachmentField{Title: "Pod Name", Value: event.Podname, Short: true}
 	roleField := slack.AttachmentField{Title: "Role", Value: event.Role, Short: true}
-	reporterField := slack.AttachmentField{Title: "Reporter", Value: config.AuthorSubname, Short: true}
+	reporterField := slack.AttachmentField{Title: "Reporter", Value: hostname, Short: true}
 	att.Fields = []*slack.AttachmentField{&eventField, &podField, &roleField, &reporterField}
 	if err != nil {
 		return (err)
 	}
-	msg := "Heads up!"
+	var msg string
+	switch levelColor {
+	case "good":
+		msg = "Phew, it has recovered."
+	case "danger":
+		msg = "UHOH! Something is broken."
+	case "warning":
+		msg = "Heads up, something isn't looking right."
+	}
 	atts := []*slack.Attachment{&att}
 	msgopt := slack.ChatPostMessageOpt{AsUser: false, Attachments: atts}
-	log.Printf("[SLACK] MSG=%+v", msg)
-	log.Printf("[SLACK] MSGOPT=%+v", msgopt)
-	log.Printf("[SLACK] ATT=%+v", att)
 	err = api.ChatPostMessage(channel.Id, msg, &msgopt)
 	return err
+}
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

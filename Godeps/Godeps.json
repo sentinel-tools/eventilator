@@ -1,0 +1,30 @@
+{
+	"ImportPath": "github.com/sentinel-tools/eventilator",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/bluele/slack",
+			"Rev": "286252c5a7c53a14ce62804b361d99a63d545b5c"
+		},
+		{
+			"ImportPath": "github.com/naoina/go-stringutil",
+			"Rev": "6b638e95a32d0c1131db0e7fe83775cbea4a0d0b"
+		},
+		{
+			"ImportPath": "github.com/naoina/toml",
+			"Rev": "751171607256bb66e64c9f0220c00662420c38e9"
+		},
+		{
+			"ImportPath": "github.com/therealbill/libredis/client",
+			"Rev": "089b27b7a512adc4bada53d767394be7321057c0"
+		},
+		{
+			"ImportPath": "github.com/therealbill/libredis/info",
+			"Rev": "089b27b7a512adc4bada53d767394be7321057c0"
+		},
+		{
+			"ImportPath": "github.com/therealbill/libredis/structures",
+			"Rev": "089b27b7a512adc4bada53d767394be7321057c0"
+		}
+	]
+}

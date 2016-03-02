@@ -20,6 +20,7 @@ type SlackConfig struct {
 	Channel       string
 	AuthorName    string
 	AuthorSubname string
+	TriggerOn     []string
 }
 
 type Evconfig struct {
