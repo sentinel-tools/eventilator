@@ -19,6 +19,7 @@ type SlackConfig struct {
 	Enabled       bool
 	Channel       string
 	AuthorName    string
+	Username      string
 	AuthorSubname string
 	TriggerOn     []string
 }

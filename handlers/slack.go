@@ -52,7 +52,7 @@ func PostNotificationEventToSlackChannel(config config.SlackConfig, event parser
 		msg = "Heads up, something isn't looking right."
 	}
 	atts := []*slack.Attachment{&att}
-	msgopt := slack.ChatPostMessageOpt{AsUser: false, Attachments: atts}
+	msgopt := slack.ChatPostMessageOpt{AsUser: false, Attachments: atts, Username: config.Username}
 	err = api.ChatPostMessage(channel.Id, msg, &msgopt)
 	return err
 }
