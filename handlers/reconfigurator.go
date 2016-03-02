@@ -18,8 +18,12 @@ type RedisConnection struct {
 var redisconn *client.Redis
 
 func SetRedisConnection(ip string, port int, auth string) (err error) {
-	redisconn, err = client.Dial(ip, port)
-	return err
+	if auth == "" {
+		redisconn, err = client.Dial(ip, port)
+	} else {
+		redisconn, err = client.DialWithConfig(&client.DialConfig{Address: fmt.Sprintf("%s:%d", ip, port), Password: auth})
+	}
+	return
 }
 
 func GetRedisConnection() (rc *client.Redis, err error) {

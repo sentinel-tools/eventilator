@@ -96,8 +96,10 @@ func main() {
 		//args := strings.Split(os.Args[2], " ")
 		args := os.Args[2:]
 		event, err := parser.ParseNotification(eventtype, args)
+		var errors []error
 		if err != nil {
 			log.Printf("%v", err)
+			errors = append(errors, err)
 		} else {
 			h, err := handlers.HandlerMap.GetHandler(event.Eventname)
 			if err != nil {
@@ -106,7 +108,7 @@ func main() {
 				err = h(event)
 				if err != nil {
 					log.Printf("Error in handler: %v", err)
-					os.Exit(1)
+					errors = append(errors, err)
 				}
 			}
 			if econf.Slack.Enabled {
@@ -115,6 +117,12 @@ func main() {
 					log.Printf("Error in Slack handler: %v", err)
 				}
 			}
+		}
+		if len(errors) > 0 {
+			for _, err := range errors {
+				log.Printf("ERROR: %v", err)
+			}
+			os.Exit(-1)
 		}
 	}
 }
