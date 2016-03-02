@@ -12,34 +12,34 @@ import (
 // client-reconfig-script options:
 // <master-name> <role> <state> <from-ip> <from-port> <to-ip> <to-port>
 type ReconfigurationEvent struct {
-	Podname       string
-	Role          string
-	State         string
-	Eventname     string
-	OldMasterIP   string
-	OldMasterPort int
-	NewMasterIP   string
-	NewMasterPort int
+	Podname       string `json:"podname"`
+	Role          string `json:"-"`
+	State         string `json:"state"`
+	Eventname     string `json:"event"`
+	OldMasterIP   string `json:"old_master_ip"`
+	OldMasterPort int    `json:"old_master_port"`
+	NewMasterIP   string `json:"new_master_ip"`
+	NewMasterPort int    `json:"new_master_port"`
 }
 
 // NotificationEvent contains the various options passe din for the different
 // notification events. These notification script options are event type specific.
 // For details see the switch sequence in the processor
 type NotificationEvent struct {
-	Podname       string
-	Role          string
-	Eventname     string
-	IP            string
-	Leader        string
-	Port          int
-	Extra         string
-	Quorum        int
-	Votes         int
-	OldMasterIP   string
-	OldMasterPort int
-	NewMasterIP   string
-	NewMasterPort int
-	Epoch         int
+	Podname       string `json:"podname,omitempty"`
+	Role          string `json:"role,omitempty"`
+	Eventname     string `json:"event,omitempty"`
+	IP            string `json:"ip,omitempty"`
+	Leader        string `json:"leader,omitempty"`
+	Port          int    `json:"port,omitempty"`
+	Extra         string `json:"extra,omitempty"`
+	Quorum        int    `json:"quorum,omitempty"`
+	Votes         int    `json:"votes,omitempty"`
+	OldMasterIP   string `json:"old_master_ip,omitempty"`
+	OldMasterPort int    `json:"old_master_port,omitempty"`
+	NewMasterIP   string `json:"new_master_ip,omitempty"`
+	NewMasterPort int    `json:"new_master_port,omitempty"`
+	Epoch         int    `json:"epoch,omitempty"`
 }
 
 func ParseReconfiguration(args []string) (re ReconfigurationEvent, err error) {

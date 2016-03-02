@@ -10,31 +10,26 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/sentinel-tools/eventilator/config"
 	"github.com/sentinel-tools/eventilator/handlers"
 	"github.com/sentinel-tools/eventilator/parser"
 )
 
-type rconfig struct {
-	RedisAddress string
-	RedisPort    int
-	RedisAuth    string
-}
-
-var rconf rconfig
-
-func getDefaultReconfigConfig() rconfig {
-	var rc = rconfig{RedisAddress: "127.0.0.1", RedisPort: 6379, RedisAuth: ""}
-	return rc
-}
+var (
+	rconf config.Rconfig
+	econf config.Evconfig
+)
 
 func init() {
 	// set up a default config for reconfigurator
-	rconf = getDefaultReconfigConfig()
+	rconf = config.GetDefaultReconfigConfig()
+	econf = config.GetDefaultEventilatorConfig()
 }
 func main() {
 	rcfile := "/etc/redis/reconfigurator.conf"
+	ecfile := "/etc/redis/eventilator.conf"
 
-	log.Printf("Consul address: %s", os.Getenv("CONSUL_ADDRESS"))
+	//log.Printf("Consul address: %s", os.Getenv("CONSUL_ADDRESS"))
 	path := strings.Split(os.Args[0], "/")
 	rand.Seed(time.Now().UnixNano())
 	calledAs := path[len(path)-1]
@@ -53,7 +48,10 @@ func main() {
 				log.Print("parsed config")
 			}
 		}
-		handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
+		err = handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
+		if err != nil {
+			log.Fatalf("Unable to connect to Store. Error='%v'", err)
+		}
 
 		rargs := os.Args[1:]
 		if len(rargs) != 7 {
@@ -79,8 +77,24 @@ func main() {
 			}
 		}
 	case "eventilator":
+		raw, err := ioutil.ReadFile(ecfile)
+		cdata := string(raw)
+		if err != nil {
+			log.Print("Unable to read configfile for reconfigurator. Using default config.")
+		} else {
+			if _, err := toml.Decode(cdata, &econf); err != nil {
+				log.Fatalf("Unable to parse configfile for eventilator: %+v", err)
+			} else {
+				log.Print("parsed config")
+			}
+		}
+		err = handlers.SetRedisConnection(econf.RedisAddress, econf.RedisPort, econf.RedisAuth)
+		if err != nil {
+			log.Fatalf("Unable to connect to Store. Error='%v'", err)
+		}
 		eventtype := os.Args[1]
-		args := strings.Split(os.Args[2], " ")
+		//args := strings.Split(os.Args[2], " ")
+		args := os.Args[2:]
 		event, err := parser.ParseNotification(eventtype, args)
 		if err != nil {
 			log.Printf("%v", err)
@@ -93,6 +107,12 @@ func main() {
 				if err != nil {
 					log.Printf("Error in handler: %v", err)
 					os.Exit(1)
+				}
+			}
+			if econf.Slack.Enabled {
+				err = handlers.PostNotificationEventToSlackChannel(econf.Slack, event)
+				if err != nil {
+					log.Printf("Error in Slack handler: %v", err)
 				}
 			}
 		}
