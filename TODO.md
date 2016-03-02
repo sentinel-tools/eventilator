@@ -12,12 +12,6 @@ parameters such as:
 	enabled=true
 	retry-on-fail=true
 
-# Slack Integration
-
-I think it would be quite neat, and useful for some, to have certain events
-relayed to a slack channel. This will of course require a slack config section.
-
-
 # Notification Metrics
 
 Storing the Failover metrics is useful but it would also be useful to record
