@@ -3,19 +3,18 @@
 
 # Alerting/Monitoring Systems
 I'd like to have stock handlers which send alerts to various alerting systems
-such as  Nagios, Sensu, ZenDesk, PagerDuty, New Relic, etc.. Each would require a specific
-section in a `eventilator.conf` file and not take those actions if missing.
+such as  Nagios, ZenDesk, PagerDuty, New Relic, etc.. Each would require a specific
+section in a `eventilator.conf` file and not take those actions if missing or disabled.
 
 For each alerting destination I am thinking of a common/required set of
 parameters such as:
 
-	enabled=true
-	retry-on-fail=true
+	Enabled=true
 
 # Notification Metrics
 
 Storing the Failover metrics is useful but it would also be useful to record
-warnings such as `sdown` events and no-good slave events. 
+warnings such as `sdown` events and no-good-slave events. 
 
 # Prometheus Integration
 
@@ -60,3 +59,9 @@ list of EventHandlers, but then it becomes a question of ordering and error
 handling. I am somewhat of the opinion that stuff like that should actually be
 handled by something that already implements that mechanism such as Consul or
 Sensu though. So it may not show up soon, if at all.
+
+The way it is written now isn't terrible in that eventilator will go through
+each known handler type (Slack, SensuJIT, etc.) and if it is enabled in it's
+config it executes it. There is no ordering and no customizable retry. The big
+problem here is that you may not want every handler to fire again if only one
+failed. When fill Consul support is added that could be done.
