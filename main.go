@@ -114,6 +114,13 @@ func main() {
 					log.Printf("Error in Slack handler: %v", err)
 				}
 			}
+			if econf.SensuJIT.Enabled {
+				err = handlers.PostNotificationEventToSensuJIT(econf.SensuJIT, event)
+				if err != nil {
+					log.Printf("Error in SensuJIT handler: %v", err)
+				}
+			}
+
 		}
 		if len(errors) > 0 {
 			for _, err := range errors {

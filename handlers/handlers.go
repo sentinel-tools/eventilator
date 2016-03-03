@@ -31,8 +31,6 @@ func init() {
 	HandlerMap = make(map[string]EventHandler)
 }
 
-// +build !custom
-
 func postReconfigurationEvent(url string, event parser.ReconfigurationEvent) (resp *http.Response, err error) {
 	client := &http.Client{}
 	jsonStr, _ := json.Marshal(event)

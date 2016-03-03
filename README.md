@@ -63,12 +63,15 @@ localhost Redis instance on the default port with authentication.  As new
 handlers such as monitoring hooks are added into eventilator it will look for
 the configuration in it's config file.
 
-## Eventilator: Slack Handler
+## Eventilator Handler: Slack 
 
 Slack integration has been added. For details on how to configure it see: [slack.md](handlers/slack.md)
 
 ![Redacted Screenshot](eventilator-slack-screenshot.png)
 
+## Eventilator Handler: SensuJIT 
+
+SensuJIT integration has been added. For details on how to configure it see: [sensu.md](handlers/sensu.md)
 
 # Custom Eventilator Handlers
 

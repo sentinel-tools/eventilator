@@ -7,11 +7,12 @@ type Rconfig struct {
 }
 
 type SensuConfig struct {
-	Hostname string
-	User     string
-	Token    string
-	Port     int
-	Enabled  bool
+	Hostname  string
+	User      string
+	Token     string
+	Port      int
+	Enabled   bool
+	TriggerOn []string
 }
 
 type SlackConfig struct {
@@ -29,5 +30,13 @@ type Evconfig struct {
 	RedisPort    int
 	RedisAuth    string
 	Sensu        SensuConfig
+	SensuJIT     SensuJITConfig
 	Slack        SlackConfig
+}
+
+type SensuJITConfig struct {
+	IP        string
+	Port      int
+	Enabled   bool
+	TriggerOn []string
 }

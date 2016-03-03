@@ -16,7 +16,13 @@ func GetDefaultSensuConfig() SensuConfig {
 }
 
 func GetDefaultEventilatorConfig() Evconfig {
-	var rc = Evconfig{RedisAddress: "127.0.0.1", RedisPort: 6379, RedisAuth: "", Sensu: GetDefaultSensuConfig(), Slack: GetDefaultSlackConfig()}
+	var rc = Evconfig{RedisAddress: "127.0.0.1",
+		RedisPort: 6379,
+		RedisAuth: "",
+		Sensu:     GetDefaultSensuConfig(),
+		Slack:     GetDefaultSlackConfig(),
+		SensuJIT:  GetDefaultSensuJITConfig(),
+	}
 	return rc
 }
 
@@ -33,6 +39,15 @@ func GetDefaultSlackConfig() SlackConfig {
 		log.Printf("Unable to get hostname??")
 	} else {
 		c.AuthorSubname = hostname
+	}
+	return c
+}
+
+func GetDefaultSensuJITConfig() SensuJITConfig {
+	c := SensuJITConfig{IP: "127.0.0.1",
+		Port:      3030,
+		Enabled:   false,
+		TriggerOn: []string{"+odown", "-odown", "+promoted-slave"},
 	}
 	return c
 }
