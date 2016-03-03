@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/sentinel-tools/eventilator/parser"
+	"github.com/therealbill/libredis/client"
 )
 
 type EventHandler func(parser.NotificationEvent) error
@@ -69,4 +70,22 @@ func putNotificationEvent(url string, event parser.NotificationEvent) (resp *htt
 		return resp, err
 	}
 	return client.Do(req)
+}
+
+var redisconn *client.Redis
+
+func SetRedisConnection(ip string, port int, auth string) (err error) {
+	if auth > "" {
+		redisconn, err = client.DialWithConfig(&client.DialConfig{Address: fmt.Sprintf("%s:%d", ip, port), Password: auth})
+	} else {
+		redisconn, err = client.Dial(ip, port)
+	}
+	return err
+}
+
+func GetRedisConnection() (rc *client.Redis, err error) {
+	if redisconn != nil {
+		return redisconn, nil
+	}
+	return rc, fmt.Errorf("Redis connection not initialized!")
 }

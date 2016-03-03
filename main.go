@@ -108,6 +108,12 @@ func main() {
 					errors = append(errors, err)
 				}
 			}
+			if econf.RedisEnabled {
+				_, err = handlers.PostNotificationEventToRedis(event)
+				if err != nil {
+					log.Printf("Error in Slack handler: %v", err)
+				}
+			}
 			if econf.Slack.Enabled {
 				err = handlers.PostNotificationEventToSlackChannel(econf.Slack, event)
 				if err != nil {

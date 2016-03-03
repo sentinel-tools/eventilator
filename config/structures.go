@@ -29,6 +29,7 @@ type Evconfig struct {
 	RedisAddress string
 	RedisPort    int
 	RedisAuth    string
+	RedisEnabled bool
 	Sensu        SensuConfig
 	SensuJIT     SensuJITConfig
 	Slack        SlackConfig
