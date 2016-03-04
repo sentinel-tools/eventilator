@@ -32,7 +32,7 @@ func main() {
 
 	f, err := os.OpenFile("/var/log/redis/sentinel.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Printf("error opening file: %v", err)
+		log.Printf("error opening log file: %v", err)
 	}
 	defer f.Close()
 
@@ -42,8 +42,10 @@ func main() {
 	calledAs := path[len(path)-1]
 	handlers.RegisterHandlers()
 
+	log.Printf("called as %s", calledAs)
 	switch calledAs {
 	case "reconfigurator":
+		log.Print("client-reconfig-script has been called")
 		raw, err := ioutil.ReadFile(rcfile)
 		if err != nil {
 			log.Print("Unable to read configfile for reconfigurator. Using default config.")
@@ -51,7 +53,7 @@ func main() {
 			if err := toml.Unmarshal(raw, &rconf); err != nil {
 				log.Fatalf("Unable to parse configfile for reconfigurator: %+v", err)
 			} else {
-				log.Print("parsed config")
+				log.Print("parsed reconfigurator config")
 			}
 		}
 		err = handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)

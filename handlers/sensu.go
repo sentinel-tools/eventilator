@@ -22,10 +22,11 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 		return err
 	}
 	var se SensuMessage
+	spodid := fmt.Sprintf("pod-%s", event.Podname)
 	switch event.Eventname {
 	case "+odown":
 		se = SensuMessage{Name: "redis-master-down",
-			Source:      hostname,
+			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
 			Description: fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
@@ -36,7 +37,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 		}
 	case "-odown":
 		se = SensuMessage{Name: "redis-master-down",
-			Source:      hostname,
+			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
 			Description: fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
@@ -47,7 +48,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 		}
 	case "-failover-abort-no-good-slave":
 		se = SensuMessage{Name: "sentinel-failover-aborted",
-			Source:      hostname,
+			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
 			Description: fmt.Sprintf("Pod %s Is in Aborted Failover State", event.Podname),
@@ -58,7 +59,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 		}
 	case "+promoted-slave":
 		se = SensuMessage{Name: "redis-master-down",
-			Source:      hostname,
+			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
 			Description: fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
@@ -69,7 +70,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 		}
 	case "+switch-master":
 		se = SensuMessage{Name: "sentinel-failover-aborted",
-			Source:      hostname,
+			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
 			Description: fmt.Sprintf("Pod %s Is in Aborted Failover State", event.Podname),

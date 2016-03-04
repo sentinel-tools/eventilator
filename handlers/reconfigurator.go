@@ -28,6 +28,7 @@ func UpdateRedisStore(event parser.ReconfigurationEvent) (code int, err error) {
 	defer f.Close()
 
 	log.SetOutput(f)
+	log.Printf("Handling event %s", event.Eventname)
 	rc, err := GetRedisConnection()
 	if err != nil {
 		log.Fatalf("Redis connect error: '%v'", err)

@@ -140,6 +140,13 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 		ne.Podname = args[1]
 		ne.IP = args[2]
 		ne.Port, _ = strconv.Atoi(args[3])
+	case "+set":
+		// master PODNAME MASTERIP MASTERPORT DIRECTIVE VALUE
+		ne.Role = args[0]
+		ne.Podname = args[1]
+		ne.IP = args[2]
+		ne.Port, _ = strconv.Atoi(args[3])
+		ne.Extra = fmt.Sprintf("%s=%s", args[4], args[5])
 	default:
 		return ne, fmt.Errorf("Don't know how to handle event '%s' yet. Its args are %v", event, os.Args[1:])
 	}
