@@ -17,14 +17,14 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 	if err != nil {
 		return err
 	}
+	hostname, err := GetMyFQDN()
 	if err != nil {
 		return err
 	}
-	hostname, err := GetMyFQDN()
 	var se SensuMessage
 	switch event.Eventname {
 	case "+odown":
-		se = SensuMessage{Name: fmt.Sprintf("Redis Master for %s is Down", event.Podname),
+		se = SensuMessage{Name: "redis-master-down",
 			Source:      hostname,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
@@ -35,7 +35,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 			ZDTags:      "monitoring redis_master_odown",
 		}
 	case "-odown":
-		se = SensuMessage{Name: fmt.Sprintf("Redis Master for %s is Down", event.Podname),
+		se = SensuMessage{Name: "redis-master-down",
 			Source:      hostname,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
@@ -46,7 +46,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 			ZDTags:      "monitoring redis_master_odown",
 		}
 	case "-failover-abort-no-good-slave":
-		se = SensuMessage{Name: fmt.Sprintf("Failover Aborted: %s Has No Promotable Slave!", event.Podname),
+		se = SensuMessage{Name: "sentinel-failover-aborted",
 			Source:      hostname,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
