@@ -93,12 +93,13 @@ func GetRedisConnection() (rc *client.Redis, err error) {
 }
 
 func GetMyFQDN() (fqdn string, err error) {
-	cmd := exec.Command("/bin/hostname", " -f")
+	cmd := exec.Command("/bin/hostname", "-f")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
 	if err != nil {
 		log.Printf("GetFDQN Error: '%v'", err)
+		return
 	}
 	fqdn = out.String()
 	fqdn = fqdn[:len(fqdn)-1] // removing EOL
