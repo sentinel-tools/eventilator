@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os/exec"
 
 	"github.com/sentinel-tools/eventilator/parser"
 	"github.com/therealbill/libredis/client"
@@ -88,4 +90,17 @@ func GetRedisConnection() (rc *client.Redis, err error) {
 		return redisconn, nil
 	}
 	return rc, fmt.Errorf("Redis connection not initialized!")
+}
+
+func GetMyFQDN() (fqdn string, err error) {
+	cmd := exec.Command("/bin/hostname", " -f")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err = cmd.Run()
+	if err != nil {
+		log.Printf("GetFDQN Error: '%v'", err)
+	}
+	fqdn = out.String()
+	fqdn = fqdn[:len(fqdn)-1] // removing EOL
+	return
 }
