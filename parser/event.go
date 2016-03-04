@@ -77,25 +77,33 @@ func ParseNotification(event string, args []string) (ne NotificationEvent, err e
 		ne.IP = args[2]
 		ne.Port, err = strconv.Atoi(args[3])
 		ne.Podname = args[5]
-	case "-sdown":
-		//master pod1 127.0.0.1 6502
-		ne.Role = args[0]
-		ne.Podname = args[1]
-		ne.IP = args[2]
-		ne.Port, err = strconv.Atoi(args[3])
 	case "+failover-state-wait-promotion":
 		//slave 127.0.0.1:6379 127.0.0.1 6379 @ tp1 127.0.0.1 7000
 		ne.Role = args[0]
 		ne.IP = args[2]
 		ne.Port, err = strconv.Atoi(args[3])
 		ne.Podname = args[5]
-	case "+sdown", "-odown", "+failover-state-select-slave":
-		//+sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ tp1 127.0.0.1 7000
+	case "-sdown", "+sdown", "-odown", "+failover-state-select-slave":
+		//master PODID MASTERIP MASTERORT
+		//slave SLAVENAME SLAVEIP SLAVEPORT @ PODNAME MASTERIP MASTERPORT
+		//sentinel SENTINELNAME SENTINELIP SENTINELPORT @ PODNAME MASTERIP MASTERPORT
 		ne.Role = args[0]
-		ne.Podname = args[1]
-		ne.IP = args[2]
-		ne.Port, err = strconv.Atoi(args[3])
-		ne.Extra = strings.Join(args[4:], " ")
+		switch ne.Role {
+		case "master":
+			ne.Podname = args[1]
+			ne.IP = args[2]
+			ne.Port, err = strconv.Atoi(args[3])
+		case "slave":
+			ne.Podname = args[5]
+			ne.IP = args[2]
+			ne.Port, err = strconv.Atoi(args[3])
+			ne.Extra = strings.Join(args[5:], " ")
+		case "sentinel":
+			ne.Podname = args[5]
+			ne.IP = args[2]
+			ne.Port, err = strconv.Atoi(args[3])
+			ne.Extra = strings.Join(args[5:], " ")
+		}
 	case "+try-failover":
 		ne.Role = args[0]
 		ne.Podname = args[1]

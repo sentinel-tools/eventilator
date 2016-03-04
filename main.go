@@ -42,18 +42,14 @@ func main() {
 	calledAs := path[len(path)-1]
 	handlers.RegisterHandlers()
 
-	log.Printf("called as %s", calledAs)
 	switch calledAs {
 	case "reconfigurator":
-		log.Print("client-reconfig-script has been called")
 		raw, err := ioutil.ReadFile(rcfile)
 		if err != nil {
 			log.Print("Unable to read configfile for reconfigurator. Using default config.")
 		} else {
 			if err := toml.Unmarshal(raw, &rconf); err != nil {
 				log.Fatalf("Unable to parse configfile for reconfigurator: %+v", err)
-			} else {
-				log.Print("parsed reconfigurator config")
 			}
 		}
 		err = handlers.SetRedisConnection(rconf.RedisAddress, rconf.RedisPort, rconf.RedisAuth)
@@ -72,12 +68,9 @@ func main() {
 			fmt.Printf("Event: %+v\n", event)
 			switch event.Role {
 			case "leader":
-				log.Print("Calling UpdateRedisStore")
 				code, err := handlers.UpdateRedisStore(event)
 				if err != nil {
-					log.Printf("updateProxtInfo call error: %v", err)
-				} else {
-					log.Print("Stored event data")
+					log.Printf("UpdateRedisStore call error: %v", err)
 				}
 				os.Exit(code)
 			case "observer":
@@ -91,8 +84,6 @@ func main() {
 		} else {
 			if err := toml.Unmarshal(raw, &econf); err != nil {
 				log.Fatalf("Unable to parse configfile for eventilator: %+v", err)
-			} else {
-				log.Print("parsed eventilator config")
 			}
 		}
 		err = handlers.SetRedisConnection(econf.RedisAddress, econf.RedisPort, econf.RedisAuth)
