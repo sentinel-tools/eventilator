@@ -11,11 +11,6 @@ parameters such as:
 
 	Enabled=true
 
-# Notification Metrics
-
-Storing the Failover metrics is useful but it would also be useful to record
-warnings such as `sdown` events and no-good-slave events. 
-
 # Prometheus Integration
 
 Prometheus is a neat and growing metrics storage system. An option to store

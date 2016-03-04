@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/bluele/slack"
 	"github.com/sentinel-tools/eventilator/config"
@@ -10,11 +11,16 @@ import (
 )
 
 func PostNotificationEventToSlackChannel(config config.SlackConfig, event parser.NotificationEvent) (err error) {
+	f, err := os.OpenFile("/var/log/redis/sentinel.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Printf("error opening log file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
 	doTrigger := contains(config.TriggerOn, event.Eventname)
 	hostname, err := GetMyFQDN()
-	log.Printf("slack.TriggerOn: %v", config.TriggerOn)
 	if !doTrigger {
-		log.Printf("ignoring %s by config", event.Eventname)
 		return nil
 	}
 	api := slack.New(config.Token)

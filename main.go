@@ -30,6 +30,13 @@ func main() {
 	rcfile := "/etc/redis/reconfigurator.conf"
 	ecfile := "/etc/redis/eventilator.conf"
 
+	f, err := os.OpenFile("/var/log/redis/sentinel.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Printf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
 	path := strings.Split(os.Args[0], "/")
 	rand.Seed(time.Now().UnixNano())
 	calledAs := path[len(path)-1]
@@ -91,16 +98,22 @@ func main() {
 			log.Fatalf("Unable to connect to Store. Error='%v'", err)
 		}
 		eventtype := os.Args[1]
-		args := os.Args[2:]
+		args := strings.Split(os.Args[2], " ")
 		event, err := parser.ParseNotification(eventtype, args)
+		if eventtype == "+new-epoch" {
+			os.Exit(0)
+		}
 		var errors []error
 		if err != nil {
-			log.Printf("%v", err)
-			errors = append(errors, err)
+			log.Printf("Parse error: %v", err)
+			os.Exit(2) // don't retry because we can't parse it anyway
 		} else {
 			h, err := handlers.HandlerMap.GetHandler(event.Eventname)
 			if err != nil {
-				log.Printf("Error: %v", err)
+				if strings.Contains(err.Error(), "No handler") {
+				} else {
+					log.Printf("GetHandler Error: %v", err)
+				}
 			} else {
 				err = h(event)
 				if err != nil {
@@ -130,9 +143,10 @@ func main() {
 		}
 		if len(errors) > 0 {
 			for _, err := range errors {
-				log.Printf("ERROR: %v", err)
+				log.Printf("[end]Handler ERROR: %v", err)
 			}
-			os.Exit(-1)
+			os.Exit(1)
 		}
 	}
+	os.Exit(0)
 }

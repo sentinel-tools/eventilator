@@ -5,6 +5,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/sentinel-tools/eventilator/parser"
@@ -20,6 +21,13 @@ func UpdateRedisStore(event parser.ReconfigurationEvent) (code int, err error) {
 	// first ensure we are operating on the right event
 	now := time.Now()
 	//nowstamp := now.Format("2015:03:07:15:04:05")
+	f, err := os.OpenFile("/var/log/redis/sentinel.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Printf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
 	rc, err := GetRedisConnection()
 	if err != nil {
 		log.Fatalf("Redis connect error: '%v'", err)

@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/sentinel-tools/eventilator/parser"
@@ -13,6 +14,13 @@ func PostNotificationEventToRedis(event parser.NotificationEvent) (code int, err
 	// first ensure we are operating on the right event
 	now := time.Now()
 	rc, err := GetRedisConnection()
+	f, err := os.OpenFile("/var/log/redis/sentinel.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Printf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
 	if err != nil {
 		log.Printf("Redis connect error: '%v'", err)
 	}
