@@ -56,6 +56,28 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 			Output:      fmt.Sprintf("Pod %s has a non-responsive Master and no promotable slave", event.Podname),
 			ZDTags:      "monitoring redis_pod_down",
 		}
+	case "+promoted-slave":
+		se = SensuMessage{Name: "redis-master-down",
+			Source:      hostname,
+			Occurrences: 1,
+			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
+			Description: fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
+			Host:        hostname,
+			Status:      0,
+			Output:      fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
+			ZDTags:      "monitoring redis_master_odown",
+		}
+	case "+switch-master":
+		se = SensuMessage{Name: "sentinel-failover-aborted",
+			Source:      hostname,
+			Occurrences: 1,
+			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
+			Description: fmt.Sprintf("Pod %s Is in Aborted Failover State", event.Podname),
+			Host:        hostname,
+			Status:      0,
+			Output:      fmt.Sprintf("Pod %s has a non-responsive Master and no promotable slave", event.Podname),
+			ZDTags:      "monitoring redis_pod_down",
+		}
 	default:
 		log.Printf("I don't handle event %s", event.Eventname)
 		return fmt.Errorf("[SensuJIT] I don't handle event %s", event.Eventname)
