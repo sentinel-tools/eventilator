@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/bluele/slack"
 	"github.com/sentinel-tools/eventilator/config"
@@ -12,7 +11,7 @@ import (
 
 func PostNotificationEventToSlackChannel(config config.SlackConfig, event parser.NotificationEvent) (err error) {
 	doTrigger := contains(config.TriggerOn, event.Eventname)
-	hostname, err := os.Hostname()
+	hostname, err := GetMyFQDN()
 	log.Printf("slack.TriggerOn: %v", config.TriggerOn)
 	if !doTrigger {
 		log.Printf("ignoring %s by config", event.Eventname)

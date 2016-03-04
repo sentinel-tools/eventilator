@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 
 	"github.com/sentinel-tools/eventilator/config"
 	"github.com/sentinel-tools/eventilator/parser"
@@ -21,7 +20,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 	if err != nil {
 		return err
 	}
-	hostname, err := os.Hostname()
+	hostname, err := GetMyFQDN()
 	var se SensuMessage
 	switch event.Eventname {
 	case "+odown":
