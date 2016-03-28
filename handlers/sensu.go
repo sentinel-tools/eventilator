@@ -47,7 +47,7 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 			ZDTags:      "monitoring redis_master_odown",
 		}
 	case "-failover-abort-no-good-slave":
-		se = SensuMessage{Name: "sentinel-failover-aborted",
+		se = SensuMessage{Name: "sentinel-failover-status",
 			Source:      spodid,
 			Occurrences: 1,
 			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
@@ -56,28 +56,30 @@ func PostNotificationEventToSensuJIT(config config.SensuJITConfig, event parser.
 			Status:      2,
 			Output:      fmt.Sprintf("Pod %s has a non-responsive Master and no promotable slave", event.Podname),
 			ZDTags:      "monitoring redis_pod_down",
+			Handler:     config.HandlerNoGoodSlave,
 		}
 	case "+promoted-slave":
-		se = SensuMessage{Name: "redis-master-down",
+		se = SensuMessage{Name: "sentinel-failover-status",
 			Source:      spodid,
 			Occurrences: 1,
-			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Master Down", event.Podname),
-			Description: fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
+			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover status", event.Podname),
+			Description: fmt.Sprintf("Pod %s has completed a Redis failover", event.Podname),
 			Host:        hostname,
 			Status:      0,
-			Output:      fmt.Sprintf("Pod %s has a non-responsive Master", event.Podname),
-			ZDTags:      "monitoring redis_master_odown",
+			Output:      fmt.Sprintf("Pod %s has completed a Redis failover", event.Podname),
+			ZDTags:      "monitoring redis_failover_status",
+			Handler:     config.HandlerPromotedSlave,
 		}
 	case "+switch-master":
-		se = SensuMessage{Name: "sentinel-failover-aborted",
+		se = SensuMessage{Name: "sentinel-failover-status",
 			Source:      spodid,
 			Occurrences: 1,
-			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover Failure", event.Podname),
-			Description: fmt.Sprintf("Pod %s Is in Aborted Failover State", event.Podname),
+			ZDSubject:   fmt.Sprintf("Monitoring alert for %s Failover status", event.Podname),
+			Description: fmt.Sprintf("Pod %s has completed a Redis failover", event.Podname),
 			Host:        hostname,
 			Status:      0,
-			Output:      fmt.Sprintf("Pod %s has a non-responsive Master and no promotable slave", event.Podname),
-			ZDTags:      "monitoring redis_pod_down",
+			Output:      fmt.Sprintf("Pod %s has completed a Redis failover", event.Podname),
+			ZDTags:      "monitoring redis_failover_status",
 		}
 	default:
 		log.Printf("I don't handle event %s", event.Eventname)
@@ -101,4 +103,5 @@ type SensuMessage struct {
 	Host        string `json:"host"`
 	Status      int    `json:"status"`
 	Output      string `json:"output"`
+	Handler     string `json:"handler"`
 }

@@ -36,8 +36,10 @@ type Evconfig struct {
 }
 
 type SensuJITConfig struct {
-	IP        string
-	Port      int
-	Enabled   bool
-	TriggerOn []string
+	IP                   string
+	Port                 int
+	Enabled              bool
+	TriggerOn            []string
+	HandlerNoGoodSlave   string
+	HandlerPromotedSlave string
 }
